@@ -1,0 +1,10 @@
+input UserInput {
+  name: String
+  lastName: String
+  email: String
+  password: String
+}
+
+type Mutation {
+  createUser(input: UserInput): String
+}
