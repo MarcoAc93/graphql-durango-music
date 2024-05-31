@@ -8,5 +8,5 @@ type User {
 
 
 type Query {
-  getUser: String
+  getUser: [User]
 }
