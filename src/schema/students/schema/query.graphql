@@ -1,0 +1,47 @@
+type DaysOfWeek {
+  monday: Boolean
+  tuesday: Boolean
+  wednesday: Boolean
+  thursday: Boolean
+  friday: Boolean
+  saturday: Boolean
+  sunday: Boolean
+}
+
+type Course {
+  name: String
+  profesor: String
+  time: String
+  days: DaysOfWeek
+}
+
+type Tutor {
+  name: String
+  contactNumber: String
+}
+
+type Inscription {
+  period: String
+  payed: Boolean
+  amount: Float
+  scholarship: Float
+  date: String
+}
+
+type Deregister {
+  comment: String
+  date: String
+}
+
+type Student {
+  id: ID
+  name: String!
+  lastName: String!
+  email: String
+  cellphone: String
+  age: String
+  course: Course
+  tutor: Tutor
+  inscription: [Inscription]
+  deregister: Deregister
+}

@@ -1,0 +1,35 @@
+input TutorInput {
+  name: String
+  contactNumber: String
+}
+
+input DaysOfWeekInput {
+  monday: Boolean
+  tuesday: Boolean
+  wednesday: Boolean
+  thursday: Boolean
+  friday: Boolean
+  saturday: Boolean
+  sunday: Boolean
+}
+
+input CourseInput {
+  name: String
+  profesor: String
+  time: String
+  days: DaysOfWeekInput
+}
+
+input StudentInput {
+  name: String!
+  lastName: String!
+  email: String
+  cellphone: String
+  age: String
+  course: CourseInput
+  tutor: TutorInput
+}
+
+type Mutation {
+  createStudent(input: StudentInput!): String
+}
