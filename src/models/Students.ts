@@ -16,7 +16,6 @@ const StudentSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    unique: true
   },
   cellphone: {
     type: String,
@@ -28,24 +27,13 @@ const StudentSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  course: {
-    type: Types.Mixed,
-    required: true,
-    trim: true,
-  },
   tutor: {
     type: Types.Mixed,
     required: true,
     trim: true,
   },
-  inscription: {
-    type: Types.Array,
-    required: true,
-    trim: true,
-  },
   deregister: {
     type: Types.Mixed,
-    required: true,
     trim: true,
   },
   createdAt: {

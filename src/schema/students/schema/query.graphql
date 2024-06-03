@@ -20,14 +20,6 @@ type Tutor {
   contactNumber: String
 }
 
-type Inscription {
-  period: String
-  payed: Boolean
-  amount: Float
-  scholarship: Float
-  date: String
-}
-
 type Deregister {
   comment: String
   date: String
@@ -40,8 +32,8 @@ type Student {
   email: String
   cellphone: String
   age: String
-  course: Course
+  courses: [Course]
   tutor: Tutor
-  inscription: [Inscription]
+  enrollment: [Enrollment]
   deregister: Deregister
 }
