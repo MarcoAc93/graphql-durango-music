@@ -1,16 +1,16 @@
 input TutorInput {
-  name: String
-  contactNumber: String
+  name: String!
+  contactNumber: String!
 }
 
 input DaysOfWeekInput {
-  monday: Boolean
-  tuesday: Boolean
-  wednesday: Boolean
-  thursday: Boolean
-  friday: Boolean
-  saturday: Boolean
-  sunday: Boolean
+  monday: Boolean!
+  tuesday: Boolean!
+  wednesday: Boolean!
+  thursday: Boolean!
+  friday: Boolean!
+  saturday: Boolean!
+  sunday: Boolean!
 }
 
 enum CourseName {
@@ -28,53 +28,53 @@ enum Time {
 }
 
 input CourseInput {
-  name: CourseName
-  profesor: String
-  time: Time
-  days: DaysOfWeekInput
+  name: CourseName!
+  profesor: String!
+  time: Time!
+  days: DaysOfWeekInput!
 }
 
 input StudentInput {
   name: String!
   lastName: String!
+  cellphone: String!
   email: String
-  cellphone: String
   age: String
   tutor: TutorInput
 }
 
 input EnrollStundentInput {
-  period: String
-  payed: Boolean
-  amount: Float
+  period: String!
+  amount: Float!
+  payed: Boolean!
   scholarship: Float
-  courses: [CourseInput]
+  courses: [CourseInput!]!
 }
 
 type Enrollment {
   id: ID!
   studentId: ID!
-  period: String
-  payed: Boolean
-  amount: Float
+  period: String!
+  payed: Boolean!
+  amount: Float!
   scholarship: Float
-  courses: [Course]
+  courses: [Course!]!
 }
 
-interface MutationResponse {
+interface Response {
   code: String!
   success: Boolean!
   message: String!
 }
 
-type EnrollStudentMutationResponse implements MutationResponse {
+type EnrollStudentMutationResponse implements Response {
   code: String!
   success: Boolean!
   message: String!
   enrollment: Enrollment!
 }
 
-type CreateStudentMutationResponse implements MutationResponse {
+type CreateStudentMutationResponse implements Response {
   code: String!
   success: Boolean!
   message: String!

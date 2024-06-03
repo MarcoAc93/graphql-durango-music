@@ -3,7 +3,19 @@ import EnrollmentModel from '../../../models/Enrollments';
 
 const resolver = {
   Query: {
-
+    getStudents: async () => {
+      try {
+        const students = await StudentModel.find({});
+        return {
+          code: 200,
+          success: true,
+          message: 'Lista de alumnos',
+          students
+        };
+      } catch (error) {
+        
+      }
+    }
   },
   Mutation: {
     createStudent: async (_: any, { input }: any) => {

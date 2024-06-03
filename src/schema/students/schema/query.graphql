@@ -1,39 +1,49 @@
 type DaysOfWeek {
-  monday: Boolean
-  tuesday: Boolean
-  wednesday: Boolean
-  thursday: Boolean
-  friday: Boolean
-  saturday: Boolean
-  sunday: Boolean
+  monday: Boolean!
+  tuesday: Boolean!
+  wednesday: Boolean!
+  thursday: Boolean!
+  friday: Boolean!
+  saturday: Boolean!
+  sunday: Boolean!
 }
 
 type Course {
-  name: String
-  profesor: String
-  time: String
-  days: DaysOfWeek
+  name: String!
+  profesor: String!
+  time: String!
+  days: DaysOfWeek!
 }
 
 type Tutor {
-  name: String
-  contactNumber: String
+  name: String!
+  contactNumber: String!
 }
 
 type Deregister {
-  comment: String
-  date: String
+  comment: String!
+  date: String!
 }
 
 type Student {
-  id: ID
+  id: ID!
   name: String!
   lastName: String!
+  cellphone: String!
   email: String
-  cellphone: String
   age: String
-  courses: [Course]
   tutor: Tutor
-  enrollment: [Enrollment]
+  enrollment: [Enrollment!]
   deregister: Deregister
+}
+
+type GetStudentsQueryResponse implements Response {
+  code: String!
+  success: Boolean!
+  message: String!
+  students: [Student!]!
+}
+
+type Query {
+  getStudents: GetStudentsQueryResponse
 }
