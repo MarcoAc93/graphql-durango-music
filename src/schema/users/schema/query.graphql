@@ -6,7 +6,16 @@ type User {
   password: String
 }
 
+input AuthInput {
+  email: String!
+  password: String!
+}
+
+type Token {
+  token: String!
+}
 
 type Query {
   getUser: [User]
+  authUser(input: AuthInput!): Token
 }
