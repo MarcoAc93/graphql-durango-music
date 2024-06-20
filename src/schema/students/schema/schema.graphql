@@ -42,6 +42,18 @@ type CreateStudentResponse implements Response {
   student: Student!
 }
 
+type GetStudentsResponse implements Response {
+  code: Float!
+  success: Boolean!
+  message: String!
+  students: [Student!]!
+}
+
+# ============================= Queries =============================
+type Query {
+  getStudents: GetStudentsResponse
+}
+
 # ============================= Mutations =============================
 type Mutation {
   createStudent(input: StudentInput!): CreateStudentResponse!
