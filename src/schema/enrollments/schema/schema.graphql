@@ -1,0 +1,52 @@
+# ============================= Inputs =============================
+input CourseInput {
+  name: String!
+  profesor: String!
+  time: String!
+  days: [String!]!
+}
+
+input EnrollStudentInput {
+  studentId: ID!
+  period: String!
+  payed: Boolean
+  amount: Float!
+  scholarship: Float
+  courses: [CourseInput!]!
+}
+
+# ============================= Types =============================
+type Course {
+  name: String!
+  profesor: String!
+  time: String!
+  days: [String!]!
+}
+
+type Enrollment {
+  id: ID!
+  studentId: String!
+  period: String!
+  payed: Boolean!
+  amount: Float!
+  scholarship: Float
+  courses: [Course!]!
+}
+
+interface Response {
+  code: Float!
+  message: String!
+  success: Boolean!
+}
+
+type EnrollStudentResponse implements Response {
+  code: Float!
+  message: String!
+  success: Boolean!
+  enrollment: Enrollment!
+}
+
+# ============================= Mutation =============================
+type Mutation {
+  enrollStudent(input: EnrollStudentInput!): EnrollStudentResponse!
+}

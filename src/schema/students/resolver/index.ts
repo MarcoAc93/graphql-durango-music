@@ -1,5 +1,4 @@
 import StudentModel from '../../../models/Students';
-// import EnrollmentModel from '../../../models/Enrollments';
 
 const resolver = {
   Query: {},
