@@ -22,6 +22,10 @@ const resolvers = {
       if (!correctPassword) throw new Error('Credenciales incorrectas');
       const token = generateToken(userExists, process.env.SECRET_KEY ?? '', { expiresIn: '24h' })
       return { token };
+    },
+    authorization: async (_: any, { token }: { token: string }) => {
+      const user = jwt.verify(token, process.env.SECRET_KEY ?? '');
+      return user;
     }
   },
   Mutation: {

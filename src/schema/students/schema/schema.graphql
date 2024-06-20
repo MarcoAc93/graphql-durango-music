@@ -1,0 +1,48 @@
+# ============================= Inputs =============================
+input TutorInput {
+  name: String
+  cellphone: String
+}
+
+input StudentInput {
+  name: String!
+  lastName: String!
+  email: String
+  cellphone: String!
+  age: String
+  tutor: TutorInput
+}
+
+# ============================= Types =============================
+type Tutor {
+  name: String
+  cellphone: String
+}
+
+type Student {
+  id: ID!
+  name: String!
+  lastName: String!
+  email: String
+  cellphone: String!
+  age: String
+  tutor: Tutor
+}
+
+interface Response {
+  code: Float!
+  success: Boolean!
+  message: String!
+}
+
+type CreateStudentResponse implements Response {
+  code: Float!
+  success: Boolean!
+  message: String!
+  student: Student!
+}
+
+# ============================= Mutations =============================
+type Mutation {
+  createStudent(input: StudentInput!): CreateStudentResponse!
+}

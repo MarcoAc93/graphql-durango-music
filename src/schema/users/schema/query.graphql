@@ -18,4 +18,5 @@ type Token {
 type Query {
   getUser: [User]
   authUser(input: AuthInput!): Token
+  authorization(token: String!): User
 }
