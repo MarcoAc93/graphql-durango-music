@@ -35,6 +35,19 @@ const resolver = {
         throw error
       }
     },
+    editStudent: async (_: any, { studentId, input }: any, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
+      try {
+        const student = await StudentModel.findById(studentId);
+        if (!student) throw new Error('No se encontro al alumno');
+
+        await StudentModel.findByIdAndUpdate({ _id: studentId }, input, { new: true });
+        return 'Alumno actualizado';
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }
   }
 };
 

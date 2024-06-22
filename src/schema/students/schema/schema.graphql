@@ -57,4 +57,5 @@ type Query {
 # ============================= Mutations =============================
 type Mutation {
   createStudent(input: StudentInput!): CreateStudentResponse!
+  editStudent(studentId: ID!, input: StudentInput!): String!
 }
