@@ -2,7 +2,8 @@ import StudentModel from '../../../models/Students';
 
 const resolver = {
   Query: {
-    getStudents: async () => {
+    getStudents: async (_: any, {}, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
       try {
         const students = await StudentModel.find({});
         return {
@@ -18,7 +19,8 @@ const resolver = {
     }
   },
   Mutation: {
-    createStudent: async (_: any, { input }: any) => {
+    createStudent: async (_: any, { input }: any, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
       try {
         const newStudent = new StudentModel(input);
         await newStudent.save();

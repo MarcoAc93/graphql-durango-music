@@ -23,7 +23,6 @@ const StudentSchema = new mongoose.Schema({
   },
   age: {
     type: String,
-    required: true,
     trim: true,
   },
   tutor: {

@@ -9,7 +9,8 @@ const generateToken = (user: any, secretKey: string, options?: jwt.SignOptions) 
 
 const resolvers = {
   Query: {
-    getUser: async () => {
+    getUser: async (_: any, {}, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
       const user = await UserModel.find({});
       return user;
     },
@@ -29,7 +30,8 @@ const resolvers = {
     }
   },
   Mutation: {
-    createUser: async (_: any, { input }: any) => {
+    createUser: async (_: any, { input }: any, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
       try {
         const saltValue = await bcrypt.genSalt(10);
         input.password = await bcrypt.hash(input.password, saltValue);

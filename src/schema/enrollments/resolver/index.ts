@@ -3,7 +3,8 @@ import EnrollmentModel from "../../../models/Enrollments";
 const resolver = {
   Query: {},
   Mutation: {
-    enrollStudent: async (_: any, { input }: any) => {
+    enrollStudent: async (_: any, { input }: any, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
       try {
         const newEnrollment = new EnrollmentModel(input);
         await newEnrollment.save();
