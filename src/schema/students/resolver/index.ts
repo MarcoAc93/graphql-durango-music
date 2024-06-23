@@ -1,7 +1,30 @@
 import StudentModel from '../../../models/Students';
+import mongoose from 'mongoose';
 
 const resolver = {
   Query: {
+    getStudent: async (_: any, { studentId }: any, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
+      try {
+        const [student] = await StudentModel.aggregate([
+          { $match: { _id: new mongoose.Types.ObjectId(studentId) } },
+          {
+            $lookup: {
+              from: 'enrollments',
+              localField: '_id',
+              foreignField: 'studentId',
+              as: 'enrollments'
+            }
+          }
+        ]);
+
+        const [lastEnroll] = student.enrollments
+        return { ...student, id: student._id, enrollment: lastEnroll };
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
     getStudents: async (_: any, {}, ctx: any) => {
       if (!ctx?.authScope) throw new Error('Usuario no autenticado');
       try {
@@ -43,6 +66,28 @@ const resolver = {
 
         await StudentModel.findByIdAndUpdate({ _id: studentId }, input, { new: true });
         return 'Alumno actualizado';
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+    deleteStudent: async (_: any, { studentId, reason }: any, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
+      try {
+        const student = await StudentModel.findById(studentId);
+        if (!student) throw new Error('No se encontro al alumno');
+
+        await StudentModel.findByIdAndUpdate(studentId,
+          {
+            deregister: {
+              reason,
+              date: new Date().toISOString(),
+            },
+            active: false,
+          },
+          { new: true }
+        );
+        return 'Alumno desactivado';
       } catch (error) {
         console.log(error);
         throw error;

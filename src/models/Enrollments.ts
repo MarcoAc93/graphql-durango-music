@@ -27,6 +27,11 @@ const EnrollmentSchema = new mongoose.Schema({
     type: Types.Mixed,
     required: true,
   },
+  active: {
+    type: Types.Boolean,
+    default: true,
+    trim: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

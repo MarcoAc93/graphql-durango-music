@@ -19,6 +19,20 @@ type Tutor {
   cellphone: String
 }
 
+type Enrollment {
+  studentId: String!
+  period: String!
+  payed: Boolean
+  amount: Float
+  scholarship: Float
+  courses: [Course!]!
+}
+
+type Deregister {
+  reason: String
+  date: String
+}
+
 type Student {
   id: ID!
   name: String!
@@ -27,6 +41,9 @@ type Student {
   cellphone: String!
   age: String
   tutor: Tutor
+  enrollment: Enrollment
+  deregister: Deregister
+  active: Boolean
 }
 
 interface Response {
@@ -51,6 +68,7 @@ type GetStudentsResponse implements Response {
 
 # ============================= Queries =============================
 type Query {
+  getStudent(studentId: ID!): Student!
   getStudents: GetStudentsResponse
 }
 
@@ -58,4 +76,5 @@ type Query {
 type Mutation {
   createStudent(input: StudentInput!): CreateStudentResponse!
   editStudent(studentId: ID!, input: StudentInput!): String!
+  deleteStudent(studentId: ID!, reason: String): String!
 }

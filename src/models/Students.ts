@@ -34,6 +34,11 @@ const StudentSchema = new mongoose.Schema({
     type: Types.Mixed,
     trim: true,
   },
+  active: {
+    type: Types.Boolean,
+    default: true,
+    trim: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
