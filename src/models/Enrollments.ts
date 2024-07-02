@@ -15,13 +15,10 @@ const EnrollmentSchema = new mongoose.Schema({
     type: Boolean,
     trim: true,
   },
-  amount: {
-    type: Number,
-    trim: true,
-  },
   scholarship: {
     type: Number,
     trim: true,
+    default: 0,
   },
   courses: {
     type: Types.Mixed,
@@ -34,7 +31,7 @@ const EnrollmentSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: new Date().toLocaleDateString(),
   },
 });
 

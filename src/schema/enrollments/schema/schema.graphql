@@ -9,8 +9,8 @@ input CourseInput {
 input EnrollStudentInput {
   studentId: ID!
   period: String!
-  payed: Boolean
   amount: Float!
+  firstMonthlyPayment: Float!
   scholarship: Float
   courses: [CourseInput!]!
 }
@@ -28,9 +28,10 @@ type Enrollment {
   studentId: String!
   period: String!
   payed: Boolean!
-  amount: Float!
   scholarship: Float
   courses: [Course!]!
+  active: Boolean!
+  createdAt: String!
 }
 
 interface Response {
