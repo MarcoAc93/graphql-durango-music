@@ -28,12 +28,21 @@ const resolver = {
     getStudents: async (_: any, {}, ctx: any) => {
       if (!ctx?.authScope) throw new Error('Usuario no autenticado');
       try {
-        const students = await StudentModel.find({});
+        const students = await StudentModel.aggregate([
+          {
+            $lookup: {
+              from: 'enrollments',
+              localField: '_id',
+              foreignField: 'studentId',
+              as: 'enrollments'
+            }
+          }
+        ]);
         return {
           code: 200,
           message: 'Lista de alumnos',
           success: true,
-          students
+          students: students.map(student => ({ id: student._id, ...student }))
         }
       } catch (error) {
         console.log(error);

@@ -23,7 +23,6 @@ type Enrollment {
   studentId: String!
   period: String!
   payed: Boolean
-  amount: Float
   scholarship: Float
   courses: [Course!]!
 }
@@ -41,7 +40,7 @@ type Student {
   cellphone: String!
   age: String
   tutor: Tutor
-  enrollment: Enrollment
+  enrollments: [Enrollment]
   deregister: Deregister
   active: Boolean
 }
