@@ -9,7 +9,8 @@
     "copy-files": "copyfiles -u 1 src/**/*.graphql api/",
     "build": "yarn clean && tsc && yarn copy-files",
     "start": "node api/index.js",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "vercel-build": "echo hello vercel"
   },
   "keywords": [],
   "author": "",
