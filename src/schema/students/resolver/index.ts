@@ -1,3 +1,4 @@
+import EnrollmentModel from '../../../models/Enrollments';
 import StudentModel from '../../../models/Students';
 import mongoose from 'mongoose';
 
@@ -48,6 +49,43 @@ const resolver = {
         console.log(error);
         throw error;
       }
+    },
+    getStudentsByClass: async (_: any, { className }: any, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
+      const classes = await EnrollmentModel.aggregate([
+        { $lookup: { from: 'students', localField: 'studentId', foreignField: '_id', as: 'studentInfo' } },
+        { $unwind: { path: '$studentInfo' } },
+        { $unwind: { path: '$courses' } },
+        { $match: { "studentInfo.active": true } },
+        { $addFields: { 'studentInfo.id': '$studentId' } },
+        { $match : { "courses.name": className } },
+        {
+          $group: {
+            _id: { course: '$courses.name', hour: '$courses.time' },
+            students: {
+              $push: {
+                id: '$studentInfo._id',
+                name: '$studentInfo.name',
+                lastName: '$studentInfo.lastName',
+                email: '$studentInfo.email',
+                cellphone: '$studentInfo.cellphone',
+                age: '$studentInfo.age',
+                tutor: '$studentInfo.tutor',
+                deregister: '$studentInfo.deregister',
+                active: '$studentInfo.active'
+              }
+            }
+          }
+        },
+        { $project: { _id: 0, course: '$_id.course', hour: '$_id.hour', students: 1 } },
+        { $sort: { course: 1, hour: 1 } }
+      ])
+      return {
+        code: 200,
+        success: true,
+        message: 'Lista de clases',
+        classes
+      };
     }
   },
   Mutation: {

@@ -45,30 +45,38 @@ type Student {
   active: Boolean
 }
 
-interface Response {
+type CreateStudentResponse {
   code: Float!
   success: Boolean!
   message: String!
+  student: Student
 }
 
-type CreateStudentResponse implements Response {
+type GetStudentsResponse {
   code: Float!
   success: Boolean!
   message: String!
-  student: Student!
+  students: [Student]
 }
 
-type GetStudentsResponse implements Response {
+type Classes {
+  hour: String!
+  course: String!
+  students: [Student]
+}
+
+type GetStudentsByClass {
   code: Float!
-  success: Boolean!
+  success: Boolean
   message: String!
-  students: [Student!]!
+  classes: [Classes]
 }
 
 # ============================= Queries =============================
 type Query {
   getStudent(studentId: ID!): Student!
   getStudents: GetStudentsResponse
+  getStudentsByClass(className: String!): GetStudentsByClass
 }
 
 # ============================= Mutations =============================
