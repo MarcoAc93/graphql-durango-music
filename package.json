@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rimraf lib/",
-    "copy-files": "copyfiles -u 1 src/**/*.graphql lib/",
+    "clean": "rimraf api/",
+    "copy-files": "copyfiles -u 1 src/**/*.graphql api/",
     "build": "yarn clean && tsc && yarn copy-files",
-    "start": "node lib/index.js",
+    "start": "node api/index.js",
     "dev": "nodemon src/index.ts"
   },
   "keywords": [],
