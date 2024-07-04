@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "clean": "rimraf lib/",
+    "copy-files": "copyfiles -u 1 src/**/*.graphql lib/",
+    "build": "yarn clean && tsc && yarn copy-files",
     "start": "node lib/index.js",
-    "start:ts": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -15,8 +17,10 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.6",
+    "copyfiles": "^2.4.1",
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.2",
+    "rimraf": "^5.0.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
