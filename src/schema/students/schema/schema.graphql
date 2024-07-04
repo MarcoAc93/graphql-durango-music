@@ -62,6 +62,7 @@ type GetStudentsResponse {
 type Classes {
   hour: String!
   course: String!
+  profesor: String!
   students: [Student]
 }
 
@@ -76,7 +77,7 @@ type GetStudentsByClass {
 type Query {
   getStudent(studentId: ID!): Student!
   getStudents: GetStudentsResponse
-  getStudentsByClass(className: String!): GetStudentsByClass
+  getStudentsByClass(className: String!, profesor: String!): GetStudentsByClass
 }
 
 # ============================= Mutations =============================

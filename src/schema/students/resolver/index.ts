@@ -50,18 +50,24 @@ const resolver = {
         throw error;
       }
     },
-    getStudentsByClass: async (_: any, { className }: any, ctx: any) => {
+    getStudentsByClass: async (_: any, { className, profesor }: any, ctx: any) => {
       if (!ctx?.authScope) throw new Error('Usuario no autenticado');
+      const profesorMatch = { 'courses.profesor': profesor };
+
       const classes = await EnrollmentModel.aggregate([
         { $lookup: { from: 'students', localField: 'studentId', foreignField: '_id', as: 'studentInfo' } },
         { $unwind: { path: '$studentInfo' } },
         { $unwind: { path: '$courses' } },
-        { $match: { "studentInfo.active": true } },
+        { $match: { 'studentInfo.active': true } },
         { $addFields: { 'studentInfo.id': '$studentId' } },
-        { $match : { "courses.name": className } },
+        { $match : { 'courses.name': className, ...(profesor && profesorMatch) } },
         {
           $group: {
-            _id: { course: '$courses.name', hour: '$courses.time' },
+            _id: {
+              course: '$courses.name', 
+              hour: '$courses.time',
+              profesor: '$courses.profesor'
+            },
             students: {
               $push: {
                 id: '$studentInfo._id',
@@ -77,7 +83,7 @@ const resolver = {
             }
           }
         },
-        { $project: { _id: 0, course: '$_id.course', hour: '$_id.hour', students: 1 } },
+        { $project: { _id: 0, course: '$_id.course', hour: '$_id.hour', profesor: '$_id.profesor', students: 1 } },
         { $sort: { course: 1, hour: 1 } }
       ])
       return {
