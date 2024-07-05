@@ -26,3 +26,5 @@ startStandaloneServer(server, {
   console.log(`🚀  Server ready at: ${result.url}`);
   connectDB();
 });
+
+export default startStandaloneServer;
