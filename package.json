@@ -9,7 +9,7 @@
     "copy-files": "copyfiles -u 1 api/**/*.graphql dist/",
     "build": "yarn clean && tsc && yarn copy-files",
     "start": "node dist/index.js",
-    "dev": "nodemon api/index.ts",
+    "dev": "nodemon src/index.ts",
     "vercel-build": "echo hello world"
   },
   "keywords": [],
