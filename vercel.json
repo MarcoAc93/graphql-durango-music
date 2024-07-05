@@ -3,6 +3,7 @@
   "installCommand": "yarn install",
   "buildCommand": "yarn build",
   "outputDirectory": "dist",
+  "devCommand": "yarn start",
   "rewrites": [
     {
       "source": "/(.*)",
