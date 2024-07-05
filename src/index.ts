@@ -7,9 +7,11 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import connectDB from './db';
 import { typeDefs, resolvers } from './schema';
 
+const env = process.env.NODE_ENV;
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: env === 'dev' ? true : false,
 });
 
 startStandaloneServer(server, {
