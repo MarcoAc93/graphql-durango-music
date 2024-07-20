@@ -85,4 +85,5 @@ type Mutation {
   createStudent(input: StudentInput!): CreateStudentResponse!
   editStudent(studentId: ID!, input: StudentInput!): String!
   deleteStudent(studentId: ID!, reason: String): String!
+  createAttendance(studentId: ID!, enrollmentId: ID!): String!
 }

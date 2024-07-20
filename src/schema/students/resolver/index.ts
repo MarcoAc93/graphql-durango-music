@@ -1,6 +1,8 @@
+import mongoose from 'mongoose';
+import moment from 'moment';
 import EnrollmentModel from '../../../models/Enrollments';
 import StudentModel from '../../../models/Students';
-import mongoose from 'mongoose';
+import AttendanceModel from '../../../models/Attendance';
 
 const resolver = {
   Query: {
@@ -148,6 +150,23 @@ const resolver = {
           { new: true }
         );
         return 'Alumno desactivado';
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+    createAttendance: async (_: any, { studentId, enrollmentId }: any, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
+      try {
+        const date = moment().format('DD/MM/YYYY');
+        const alreadyHasAttendance = await AttendanceModel.findOne({ studentId, enrollmentId, date });
+        if (alreadyHasAttendance) {
+          await alreadyHasAttendance.deleteOne();
+          return 'Se elimino la asistencia';
+        }
+        const attendance = new AttendanceModel({ studentId, enrollmentId, date });
+        await attendance.save();
+        return 'Asistencia registrada';
       } catch (error) {
         console.log(error);
         throw error;
