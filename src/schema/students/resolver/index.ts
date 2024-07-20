@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import moment from 'moment';
-import EnrollmentModel from '../../../models/Enrollments';
 import StudentModel from '../../../models/Students';
 import AttendanceModel from '../../../models/Attendance';
 
@@ -52,54 +51,59 @@ const resolver = {
         throw error;
       }
     },
-    getStudentsByClass: async (_: any, { className, profesor, days }: any, ctx: any) => {
+    getStudentsByProfesor: async (_: any, { profesor }: any, ctx: any) => {
       if (!ctx?.authScope) throw new Error('Usuario no autenticado');
-      const profesorMatch = { 'courses.profesor': profesor };
-      const daysMatch = { 'courses.days': days };
-
-      const classes = await EnrollmentModel.aggregate([
-        { $lookup: { from: 'students', localField: 'studentId', foreignField: '_id', as: 'studentInfo' } },
-        { $unwind: { path: '$studentInfo' } },
-        { $unwind: { path: '$courses' } },
+      const students = await StudentModel.aggregate([
+        {
+          $lookup: {
+            from: "enrollments",
+            localField: "_id",
+            foreignField: "studentId",
+            as: "enrollments"
+          }
+        },
         {
           $match: {
-            'studentInfo.active': true,
-            'courses.name': className,
-            ...(profesor && profesorMatch),
-            ...(days && daysMatch)
-          },
+            "enrollments.courses.profesor": profesor
+          }
         },
-        { $addFields: { 'studentInfo.id': '$studentId' } },
         {
-          $group: {
-            _id: {
-              course: '$courses.name', 
-              hour: '$courses.time',
-              profesor: '$courses.profesor'
-            },
-            students: {
-              $push: {
-                id: '$studentInfo._id',
-                name: '$studentInfo.name',
-                lastName: '$studentInfo.lastName',
-                email: '$studentInfo.email',
-                cellphone: '$studentInfo.cellphone',
-                age: '$studentInfo.age',
-                tutor: '$studentInfo.tutor',
-                deregister: '$studentInfo.deregister',
-                active: '$studentInfo.active'
+          $addFields: {
+            "id": "$_id",
+            enrollments: {
+              $map: {
+                input: "$enrollments",
+                as: "enrollment",
+                in: {
+                  id: "$$enrollment._id",
+                  studentId: "$$enrollment.studentId",
+                  period: "$$enrollment.period",
+                  payed: "$$enrollment.payed",
+                  scholarship: "$$enrollment.scholarship",
+                  courses: "$$enrollment.courses",
+                  active: "$$enrollment.active",
+                  createdAt: "$$enrollment.createdAt"
+                }
               }
             }
           }
         },
-        { $project: { _id: 0, course: '$_id.course', hour: '$_id.hour', profesor: '$_id.profesor', students: 1 } },
-        { $sort: { course: 1, hour: 1 } }
-      ])
+        {
+          $project: {
+            _id: 0,
+            id: 1,
+            name: 1,
+            lastName: 1,
+            cellphone: 1,
+            enrollments: 1
+          }
+        }
+      ]);
       return {
         code: 200,
         success: true,
-        message: 'Lista de clases',
-        classes
+        message: 'Lista de alumnos por profesor',
+        students
       };
     }
   },

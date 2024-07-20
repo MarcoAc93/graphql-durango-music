@@ -66,18 +66,11 @@ type Classes {
   students: [Student]
 }
 
-type GetStudentsByClass {
-  code: Float!
-  success: Boolean
-  message: String!
-  classes: [Classes]
-}
-
 # ============================= Queries =============================
 type Query {
   getStudent(studentId: ID!): Student!
   getStudents: GetStudentsResponse
-  getStudentsByClass(className: String!, profesor: String, days: [String]): GetStudentsByClass
+  getStudentsByProfesor(profesor: String): GetStudentsResponse
 }
 
 # ============================= Mutations =============================
