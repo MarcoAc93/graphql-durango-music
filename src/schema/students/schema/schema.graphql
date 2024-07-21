@@ -41,6 +41,7 @@ type Student {
   age: String
   tutor: Tutor
   enrollments: [Enrollment]
+  attendances: [Attendance]
   deregister: Deregister
   active: Boolean
 }
@@ -56,13 +57,6 @@ type GetStudentsResponse {
   code: Float!
   success: Boolean!
   message: String!
-  students: [Student]
-}
-
-type Classes {
-  hour: String!
-  course: String!
-  profesor: String!
   students: [Student]
 }
 

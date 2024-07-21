@@ -1,7 +1,18 @@
 import mongoose from 'mongoose';
-import moment from 'moment';
 import StudentModel from '../../../models/Students';
-import AttendanceModel from '../../../models/Attendance';
+import moment from 'moment';
+moment.locale('es', { week: { dow: 1 } });
+
+const generateDaysOfWeek = () => {
+  const startOfWeek = moment().startOf('week');
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const date = startOfWeek.clone().add(i, 'days');
+    const formattedDate = date.format('DD/MM/YYYY');
+    days.push(formattedDate);
+  }
+  return days;
+}
 
 const resolver = {
   Query: {
@@ -54,51 +65,27 @@ const resolver = {
     getStudentsByProfesor: async (_: any, { profesor }: any, ctx: any) => {
       if (!ctx?.authScope) throw new Error('Usuario no autenticado');
       const students = await StudentModel.aggregate([
+        { $lookup: { from: "enrollments", localField: "_id", foreignField: "studentId", as: "enrollments" } },
         {
           $lookup: {
-            from: "enrollments",
-            localField: "_id",
-            foreignField: "studentId",
-            as: "enrollments"
-          }
-        },
-        {
-          $match: {
-            "enrollments.courses.profesor": profesor
+            from: "attendances",
+            localField: "enrollments._id",
+            foreignField: "enrollmentId",
+            pipeline: [
+            { $match: { $expr: { $and: [ { $gte: ["$date", generateDaysOfWeek()[0]] }, { $lte: ["$date", generateDaysOfWeek()[6]] } ] } } }
+          ],
+            as: "attendances"
           }
         },
         {
           $addFields: {
-            "id": "$_id",
-            enrollments: {
-              $map: {
-                input: "$enrollments",
-                as: "enrollment",
-                in: {
-                  id: "$$enrollment._id",
-                  studentId: "$$enrollment.studentId",
-                  period: "$$enrollment.period",
-                  payed: "$$enrollment.payed",
-                  scholarship: "$$enrollment.scholarship",
-                  courses: "$$enrollment.courses",
-                  active: "$$enrollment.active",
-                  createdAt: "$$enrollment.createdAt"
-                }
-              }
-            }
+            id: '$_id',
+            "enrollments": { $map: { input: "$enrollments", as: "enrollment", in: { $mergeObjects: ["$$enrollment", { id: "$$enrollment._id"}] } } }
           }
         },
-        {
-          $project: {
-            _id: 0,
-            id: 1,
-            name: 1,
-            lastName: 1,
-            cellphone: 1,
-            enrollments: 1
-          }
-        }
-      ]);
+        { $match: { "enrollments.courses.profesor": profesor } }
+      ])
+      // console.log(students)
       return {
         code: 200,
         success: true,
@@ -159,23 +146,6 @@ const resolver = {
         throw error;
       }
     },
-    createAttendance: async (_: any, { studentId, enrollmentId }: any, ctx: any) => {
-      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
-      try {
-        const date = moment().format('DD/MM/YYYY');
-        const alreadyHasAttendance = await AttendanceModel.findOne({ studentId, enrollmentId, date });
-        if (alreadyHasAttendance) {
-          await alreadyHasAttendance.deleteOne();
-          return 'Se elimino la asistencia';
-        }
-        const attendance = new AttendanceModel({ studentId, enrollmentId, date });
-        await attendance.save();
-        return 'Asistencia registrada';
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    }
   }
 };
 
