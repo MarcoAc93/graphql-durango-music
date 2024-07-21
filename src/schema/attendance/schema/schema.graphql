@@ -1,0 +1,11 @@
+type Attendance {
+  _id: String
+  studentId: String
+  enrollmentId: String
+  date: String
+  createdAt: String
+}
+
+type Mutation {
+  createAttendance(studentId: ID!, enrollmentId: ID!, date: String!): String!
+}

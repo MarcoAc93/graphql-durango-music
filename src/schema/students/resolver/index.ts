@@ -1,6 +1,18 @@
-import EnrollmentModel from '../../../models/Enrollments';
-import StudentModel from '../../../models/Students';
 import mongoose from 'mongoose';
+import StudentModel from '../../../models/Students';
+import moment from 'moment';
+moment.locale('es', { week: { dow: 1 } });
+
+const generateDaysOfWeek = () => {
+  const startOfWeek = moment().startOf('week');
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const date = startOfWeek.clone().add(i, 'days');
+    const formattedDate = date.format('DD/MM/YYYY');
+    days.push(formattedDate);
+  }
+  return days;
+}
 
 const resolver = {
   Query: {
@@ -50,54 +62,35 @@ const resolver = {
         throw error;
       }
     },
-    getStudentsByClass: async (_: any, { className, profesor, days }: any, ctx: any) => {
+    getStudentsByProfesor: async (_: any, { profesor }: any, ctx: any) => {
       if (!ctx?.authScope) throw new Error('Usuario no autenticado');
-      const profesorMatch = { 'courses.profesor': profesor };
-      const daysMatch = { 'courses.days': days };
-
-      const classes = await EnrollmentModel.aggregate([
-        { $lookup: { from: 'students', localField: 'studentId', foreignField: '_id', as: 'studentInfo' } },
-        { $unwind: { path: '$studentInfo' } },
-        { $unwind: { path: '$courses' } },
+      const students = await StudentModel.aggregate([
+        { $lookup: { from: "enrollments", localField: "_id", foreignField: "studentId", as: "enrollments" } },
         {
-          $match: {
-            'studentInfo.active': true,
-            'courses.name': className,
-            ...(profesor && profesorMatch),
-            ...(days && daysMatch)
-          },
-        },
-        { $addFields: { 'studentInfo.id': '$studentId' } },
-        {
-          $group: {
-            _id: {
-              course: '$courses.name', 
-              hour: '$courses.time',
-              profesor: '$courses.profesor'
-            },
-            students: {
-              $push: {
-                id: '$studentInfo._id',
-                name: '$studentInfo.name',
-                lastName: '$studentInfo.lastName',
-                email: '$studentInfo.email',
-                cellphone: '$studentInfo.cellphone',
-                age: '$studentInfo.age',
-                tutor: '$studentInfo.tutor',
-                deregister: '$studentInfo.deregister',
-                active: '$studentInfo.active'
-              }
-            }
+          $lookup: {
+            from: "attendances",
+            localField: "enrollments._id",
+            foreignField: "enrollmentId",
+            pipeline: [
+            { $match: { $expr: { $and: [ { $gte: ["$date", generateDaysOfWeek()[0]] }, { $lte: ["$date", generateDaysOfWeek()[6]] } ] } } }
+          ],
+            as: "attendances"
           }
         },
-        { $project: { _id: 0, course: '$_id.course', hour: '$_id.hour', profesor: '$_id.profesor', students: 1 } },
-        { $sort: { course: 1, hour: 1 } }
+        {
+          $addFields: {
+            id: '$_id',
+            "enrollments": { $map: { input: "$enrollments", as: "enrollment", in: { $mergeObjects: ["$$enrollment", { id: "$$enrollment._id"}] } } }
+          }
+        },
+        { $match: { "enrollments.courses.profesor": profesor } }
       ])
+      // console.log(students)
       return {
         code: 200,
         success: true,
-        message: 'Lista de clases',
-        classes
+        message: 'Lista de alumnos por profesor',
+        students
       };
     }
   },
@@ -152,7 +145,7 @@ const resolver = {
         console.log(error);
         throw error;
       }
-    }
+    },
   }
 };
 

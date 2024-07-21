@@ -41,6 +41,7 @@ type Student {
   age: String
   tutor: Tutor
   enrollments: [Enrollment]
+  attendances: [Attendance]
   deregister: Deregister
   active: Boolean
 }
@@ -59,25 +60,11 @@ type GetStudentsResponse {
   students: [Student]
 }
 
-type Classes {
-  hour: String!
-  course: String!
-  profesor: String!
-  students: [Student]
-}
-
-type GetStudentsByClass {
-  code: Float!
-  success: Boolean
-  message: String!
-  classes: [Classes]
-}
-
 # ============================= Queries =============================
 type Query {
   getStudent(studentId: ID!): Student!
   getStudents: GetStudentsResponse
-  getStudentsByClass(className: String!, profesor: String, days: [String]): GetStudentsByClass
+  getStudentsByProfesor(profesor: String): GetStudentsResponse
 }
 
 # ============================= Mutations =============================
@@ -85,4 +72,5 @@ type Mutation {
   createStudent(input: StudentInput!): CreateStudentResponse!
   editStudent(studentId: ID!, input: StudentInput!): String!
   deleteStudent(studentId: ID!, reason: String): String!
+  createAttendance(studentId: ID!, enrollmentId: ID!): String!
 }
