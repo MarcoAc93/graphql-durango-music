@@ -6,6 +6,13 @@ type Attendance {
   createdAt: String
 }
 
+input CreateAttendanceInput {
+  studentId: ID!
+  enrollmentId: ID!
+  course: String!
+  date: String!
+}
+
 type Mutation {
-  createAttendance(studentId: ID!, enrollmentId: ID!, date: String!): String!
+  createAttendance(input: CreateAttendanceInput!): String!
 }
