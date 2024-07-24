@@ -14,6 +14,10 @@ const Attendance = new mongoose.Schema({
     type: Types.String,
     required: true,
   },
+  course: {
+    type: Types.String,
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: new Date().toLocaleDateString(),

@@ -42,12 +42,22 @@ const resolver = {
       if (!ctx?.authScope) throw new Error('Usuario no autenticado');
       try {
         const students = await StudentModel.aggregate([
+          { $lookup: { from: 'enrollments', localField: '_id', foreignField: 'studentId', as: 'enrollments' } },
           {
             $lookup: {
-              from: 'enrollments',
-              localField: '_id',
-              foreignField: 'studentId',
-              as: 'enrollments'
+              from: "attendances",
+              localField: "enrollments._id",
+              foreignField: "enrollmentId",
+              pipeline: [
+              { $match: { $expr: { $and: [ { $gte: ["$date", generateDaysOfWeek()[0]] }, { $lte: ["$date", generateDaysOfWeek()[6]] } ] } } }
+            ],
+              as: "attendances"
+            }
+          },
+          {
+            $addFields: {
+              id: '$_id',
+              "enrollments": { $map: { input: "$enrollments", as: "enrollment", in: { $mergeObjects: ["$$enrollment", { id: "$$enrollment._id"}] } } }
             }
           }
         ]);
