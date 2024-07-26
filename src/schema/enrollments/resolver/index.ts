@@ -25,20 +25,20 @@ const resolver = {
         }
       });
 
+      
       const newEnrollment = new EnrollmentModel(input);
       const enrollment = await newEnrollment.save();
-
       if (input.amount) {
         const enrollmentDate = new Date();
         const enrollmentPayment = new PaymentsModel({
           enrollmentId: enrollment._id,
           amount: input.amount,
-          type: 'inscripcion',
+          type: input.amount < 350 ? 'inscripcion / parcialidad' : 'inscripcion',
           paymentDate: enrollmentDate.toLocaleDateString(),
         });
         const payment = await enrollmentPayment.save();
         if (payment) {
-          enrollment.payed = true;
+          enrollment.payed = input.amount < 350 ? false : true;
           await enrollment.save();
         }
       }
