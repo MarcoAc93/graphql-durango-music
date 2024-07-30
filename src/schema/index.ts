@@ -19,7 +19,8 @@ const resolvers = {
   Query: {
     ...userResolvers.Query,
     ...studentsResolvers.Query,
-    ...enrollmentsResolver.Query
+    ...enrollmentsResolver.Query,
+    ...attendanceResolver.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,

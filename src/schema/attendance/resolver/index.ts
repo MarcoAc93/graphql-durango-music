@@ -1,7 +1,36 @@
 import AttendanceModel from "../../../models/Attendance";
 
 const resolver = {
-  Query: {},
+  Query: {
+    getAttendances: async (_: any, {}, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
+
+      try {
+        const attendances = await AttendanceModel.aggregate([
+          { $lookup: { from: 'students', localField: 'studentId', foreignField: '_id', as: 'student' } },
+          { $unwind: { path: '$student' } },
+          {
+            $group: {
+              _id: { studentId: '$studentId', course: '$course' },
+              name: { $first: '$student.name' },
+              lastName: { $first: '$student.lastName' },
+              attendanceDates: { $push: '$date' },
+              count: { $sum: 1 }
+            }
+          },
+          { $project: { _id: '$_id._id', studentId: '$_id.studentId', name: 1, lastName: 1, course: '$_id.course', attendanceDates: 1, count: 1 } }
+        ]);
+        return {
+          code: 200,
+          success: true,
+          message: 'Lista de asistencias',
+          attendances: attendances.map((el: any) => ({ studentName: `${el.name} ${el.lastName}`, dates: el.attendanceDates, course: el.course, count: el.count }))
+        }
+      } catch (error) {
+        
+      }
+    }
+  },
   Mutation: {
     createAttendance: async (_: any, { input: { studentId, enrollmentId, date, course } }: any, ctx: any) => {
       if (!ctx?.authScope) throw new Error('Usuario no autenticado');

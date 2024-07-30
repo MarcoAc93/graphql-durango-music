@@ -13,6 +13,7 @@ input EnrollStudentInput {
   firstMonthlyPayment: Float!
   scholarship: Float
   courses: [CourseInput!]!
+  paymentMethod: String!
 }
 
 # ============================= Types =============================

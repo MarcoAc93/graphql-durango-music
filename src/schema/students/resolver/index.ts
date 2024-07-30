@@ -49,8 +49,8 @@ const resolver = {
               localField: "enrollments._id",
               foreignField: "enrollmentId",
               pipeline: [
-              { $match: { $expr: { $and: [ { $gte: ["$date", generateDaysOfWeek()[0]] }, { $lte: ["$date", generateDaysOfWeek()[6]] } ] } } }
-            ],
+                { $match: { $expr: { $and: [ { $gte: ["$date", generateDaysOfWeek()[0]] }, { $lte: ["$date", generateDaysOfWeek()[6]] } ] } } }
+              ],
               as: "attendances"
             }
           },
