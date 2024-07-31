@@ -3,7 +3,39 @@ import EnrollmentModel from "../../../models/Enrollments";
 import PaymentsModel from "../../../models/Payments";
 
 const resolver = {
-  Query: {},
+  Query: {
+    getFreeSpaces: async (_: any, { input }: any, ctx: any) => {
+      if (!ctx?.authScope) throw new Error('Usuario no autenticado');
+      const freeSpaces = await EnrollmentModel.aggregate([
+        { $match: { period: input.period, active: true } },
+        { $unwind: "$courses" },
+        {
+          $group: {
+            _id: {
+              name: "$courses.name",
+              time: "$courses.time",
+              profesor: "$courses.profesor",
+              days: "$courses.days"
+            },
+            totalStudents: { $sum: 1 }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            course: {
+              name: "$_id.name",
+              profesor: "$_id.profesor",
+              time: "$_id.time",
+              days: "$_id.days"
+            },
+            totalStudents: 1
+          }
+        }
+      ])
+      return freeSpaces
+    }
+  },
   Mutation: {
     enrollStudent: async (_: any, { input }: any, ctx: any) => {
       if (!ctx?.authScope) throw new Error('Usuario no autenticado');
@@ -25,20 +57,20 @@ const resolver = {
         }
       });
 
+      
       const newEnrollment = new EnrollmentModel(input);
       const enrollment = await newEnrollment.save();
-
       if (input.amount) {
         const enrollmentDate = new Date();
         const enrollmentPayment = new PaymentsModel({
           enrollmentId: enrollment._id,
           amount: input.amount,
-          type: 'inscripcion',
+          type: input.amount < 350 ? 'inscripcion / parcialidad' : 'inscripcion',
           paymentDate: enrollmentDate.toLocaleDateString(),
         });
         const payment = await enrollmentPayment.save();
         if (payment) {
-          enrollment.payed = true;
+          enrollment.payed = input.amount < 350 ? false : true;
           await enrollment.save();
         }
       }

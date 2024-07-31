@@ -3,7 +3,23 @@ type Attendance {
   studentId: String
   enrollmentId: String
   date: String
+  course: String
   createdAt: String
+}
+
+type AtendanceInfo {
+  _id: String
+  studentName: String
+  dates: [String]
+  course: String
+  count: Float
+}
+
+type AttendanceInfoResponse {
+  code: Float
+  success: Boolean
+  message: String
+  attendances: [AtendanceInfo]
 }
 
 input CreateAttendanceInput {
@@ -15,4 +31,8 @@ input CreateAttendanceInput {
 
 type Mutation {
   createAttendance(input: CreateAttendanceInput!): String!
+}
+
+type Query {
+  getAttendances: AttendanceInfoResponse!
 }

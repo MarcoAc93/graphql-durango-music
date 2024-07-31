@@ -12,7 +12,7 @@ const generateDaysOfWeek = () => {
     days.push(formattedDate);
   }
   return days;
-}
+};
 
 const resolver = {
   Query: {
@@ -48,9 +48,6 @@ const resolver = {
               from: "attendances",
               localField: "enrollments._id",
               foreignField: "enrollmentId",
-              pipeline: [
-              { $match: { $expr: { $and: [ { $gte: ["$date", generateDaysOfWeek()[0]] }, { $lte: ["$date", generateDaysOfWeek()[6]] } ] } } }
-            ],
               as: "attendances"
             }
           },
@@ -61,6 +58,16 @@ const resolver = {
             }
           }
         ]);
+        students.forEach(student => {
+          const startDate = moment(generateDaysOfWeek()[0], 'DD/MM/YYYY');
+          const endDay = moment(generateDaysOfWeek()[6], 'DD/MM/YYYY');
+          const attendances = student.attendances.filter((el: any) => {
+            const date = moment(el.date, 'DD/MM/YYYY');
+            if (date.isSameOrAfter(startDate) && date.isSameOrBefore(endDay)) return el;
+          })
+          student.attendances = attendances;
+          return student;
+        });
         return {
           code: 200,
           message: 'Lista de alumnos',

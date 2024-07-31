@@ -18,6 +18,11 @@ const PaymentsSchema = new mongoose.Schema({
     type: Date,
     default: new Date().toLocaleDateString(),
   },
+  paymentMethod: {
+    type: String,
+    require: true,
+    default: 'efectivo'
+  },
   active: {
     type: Types.Boolean,
     default: true,
