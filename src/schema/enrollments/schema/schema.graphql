@@ -16,6 +16,14 @@ input EnrollStudentInput {
   paymentMethod: String!
 }
 
+input FreeSpacesInput {
+  courseName: String
+  time: String
+  profesor: String
+  days: [String]
+  period: String
+}
+
 # ============================= Types =============================
 type Course {
   name: String!
@@ -48,7 +56,16 @@ type EnrollStudentResponse implements Response {
   enrollment: Enrollment!
 }
 
+type FreeSpacesResponse {
+  totalStudents: Float
+  course: Course
+}
+
 # ============================= Mutation =============================
 type Mutation {
   enrollStudent(input: EnrollStudentInput!): EnrollStudentResponse!
+}
+
+type Query {
+  getFreeSpaces(input: FreeSpacesInput!): [FreeSpacesResponse]
 }
