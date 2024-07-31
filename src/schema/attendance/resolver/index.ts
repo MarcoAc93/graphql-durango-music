@@ -18,6 +18,17 @@ const resolver = {
               count: { $sum: 1 }
             }
           },
+          { $unwind: "$attendanceDates" },
+          { $sort: { "attendanceDates": 1 } },
+          {
+            $group: {
+              _id: { _id: '$_id', studentId: '$_id.studentId', course: '$_id.course' },
+              name: { $first: '$name' },
+              lastName: { $first: '$lastName' },
+              attendanceDates: { $push: '$attendanceDates' },
+              count: { $first: '$count' }
+            }
+          },
           { $project: { _id: '$_id._id', studentId: '$_id.studentId', name: 1, lastName: 1, course: '$_id.course', attendanceDates: 1, count: 1 } }
         ]);
         return {
