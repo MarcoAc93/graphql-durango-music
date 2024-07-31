@@ -17,10 +17,6 @@ input EnrollStudentInput {
 }
 
 input FreeSpacesInput {
-  courseName: String
-  time: String
-  profesor: String
-  days: [String]
   period: String
 }
 
